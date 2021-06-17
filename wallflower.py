@@ -9,13 +9,11 @@ source = requests.get('https://www.bathandbodyworks.com/c/home-fragrance/wallflo
 soup = BeautifulSoup(source.text, 'lxml')
 div = soup.find(id='search-result-items')
 wfs = []
-morePages = True
-# print(div.text)
 
 
-def CreateJson():
+def CreateJson(data):
     with open('wallflowers.json','w') as writer:
-        json.dump(wfs, writer)
+        json.dump(data, writer)
 
 
 def NextPage(soup):
@@ -38,4 +36,4 @@ while NextPage(soup):
     soup = BeautifulSoup(source.text, 'lxml')
     div = soup.find(id='search-result-items')
     ParseWFs(div.find_all('li', attrs={'class': re.compile('^grid-tile.*')}))
-CreateJson()
+CreateJson(wfs)
