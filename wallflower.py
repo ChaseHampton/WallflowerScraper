@@ -9,8 +9,8 @@ source = requests.get('https://www.bathandbodyworks.com/c/home-fragrance/wallflo
 
 soup = BeautifulSoup(source.text, 'lxml')
 div = soup.find(id='search-result-items')
-wfs = []
-
+wfs = []     
+imgList = []
 
 def CreateJson(data):
     with open('wallflowers.json','w') as writer:
@@ -23,7 +23,8 @@ def NextPage(soup):
         return next['href']
     else:
         return False
-imgList = []
+
+
 def ParseWFs(list):
     for item in list:
         wfName = item.find(class_="product-name").text.replace('\n\n','')
@@ -34,11 +35,14 @@ def ParseWFs(list):
         
 
 ParseWFs(div.find_all('li', attrs={'class': re.compile('^grid-tile.*')}))
+
 while NextPage(soup):
     source = requests.get(NextPage(soup), headers=headers)
     soup = BeautifulSoup(source.text, 'lxml')
     div = soup.find(id='search-result-items')
     ParseWFs(div.find_all('li', attrs={'class': re.compile('^grid-tile.*')}))
+
 CreateJson(wfs)
+
 for img in imgList:
     Images.ImageParse(img[1],img[0])
